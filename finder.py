@@ -11,25 +11,22 @@ kitchen tables,floor,3/23/23,4:00pm
 cabinets,corner,5/30/23,10:30pm"""
 
 
-def main(database, name):
-    # This code will split the database string into an array of strings and will create new lines for the function
-    string_array = database.split('\n')
+def main(object_name):
+    # Split the HOME_DATABASE string into an array of strings by splitting by new lines
+    database_entries = HOME_DATABASE.split('\n')
 
-    # This code will iterate through each line in the array
-    for line_number, line in enumerate(string_array, start=1):
-        # This code is going to split the line on commas so that the sentences are separated
-        line_parts = line.split(',')
+    # Iterate through the array of strings
+    for entry in database_entries:
+        # Split the string on commas
+        item, location, date_last_moved, time_last_moved = entry.split(',')
 
-        if len(line_parts) >= 4:
-            item_name = line_parts[0].strip()
-            location = line_parts[1].strip()
-            date_last_moved = line_parts[2].strip()
-            time_last_moved = line_parts[3].strip()
+        # Check if the name of the item matches the name passed into the function
+        if item.strip() == object_name:
+            # Return the location, date last moved, and time last moved as a string
+            return f"The {item.strip()} were found in the {location.strip()} and were placed there on {date_last_moved.strip()} at {time_last_moved.strip()}"
 
-            if item_name == name:
-                return f"The {item_name} were found in the {location} and were placed there on {date_last_moved} at {time_last_moved}"
-            
-    return None
+    # If the item is not found, raise a ValueError
+    raise ValueError(f"Sorry, could not find your item named {object_name} within the database")
 
         # # This code will check to see if the line has enough elements
         # if len(line_parts) >= 4:
@@ -47,21 +44,30 @@ def main(database, name):
         # else:
         #     print(f"Skipping line {line_number} with an unexpected format: {line}")
 
+
+def parse_args(args_list):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('object', type=str, help="Please enter the name that we are searching for.")
+    args = parser.parse_args(args_list)
+    return args
+
 # This code will call the HOME_DATABASE
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Error try again, not right")
-        sys.exit(1)
+    arguments = parse_args(sys.argv[1:])
+    try:
+        print(main(arguments.object))
+    except ValueError as e:
+        print(e)
 
 
-name_to_find = sys.argv[1]
+# name_to_find = sys.argv[1]
 
-result = main(HOME_DATABASE, name_to_find)
+# result = main(HOME_DATABASE, name_to_find)
 
-if result:
-    print(result)
-else:
-    print(f"ValueError: Sorry, could not find your item named {name_to_find} within the database")
+# if result:
+#     print(result)
+# else:
+#     print(f"ValueError: Sorry, could not find your item named {name_to_find} within the database")
 
 
 
